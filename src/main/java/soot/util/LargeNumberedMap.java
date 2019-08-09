@@ -33,7 +33,7 @@ import java.util.NoSuchElementException;
  */
 
 public final class LargeNumberedMap<K extends Numberable, V> {
-  public LargeNumberedMap(ArrayNumberer<K> universe) {
+  public LargeNumberedMap(IterableNumberer<K> universe) {
     this.universe = universe;
     int newsize = universe.size();
     if (newsize < 8) {
@@ -45,11 +45,12 @@ public final class LargeNumberedMap<K extends Numberable, V> {
   public boolean put(Numberable key, V value) {
     int number = key.getNumber();
     if (number == 0) {
-      throw new RuntimeException("oops, forgot to initialize");
+      throw new RuntimeException(String.format("oops, forgot to initialize. Object is of type %s, and looks like this: %s",
+          key.getClass().getName(), key.toString()));
     }
     if (number >= values.length) {
       Object[] oldValues = values;
-      values = new Object[universe.size() * 2 + 5];
+      values = new Object[Math.max(universe.size() * 2, number) + 5];
       System.arraycopy(oldValues, 0, values, 0, oldValues.length);
     }
     boolean ret = (values[number] != value);
@@ -97,5 +98,5 @@ public final class LargeNumberedMap<K extends Numberable, V> {
   /* Private stuff. */
 
   private Object[] values;
-  private ArrayNumberer<K> universe;
+  private IterableNumberer<K> universe;
 }

@@ -32,7 +32,7 @@ import java.util.*;
  *
  * @author Ondrej Lhotak
  */
-@javax.annotation.Generated(value = "Saxonica v3.0", date = "2018-07-02T12:04:46.647+02:00", comments = "from soot_options.xml")
+@javax.annotation.Generated(value = "Saxonica v3.0", comments = "from soot_options.xml")
 public class Options extends OptionsBase {
 
     public Options(Singletons.Global g) {
@@ -98,6 +98,8 @@ public class Options extends OptionsBase {
     public static final int java_version_7 = 8;
     public static final int java_version_1_8 = 9;
     public static final int java_version_8 = 9;
+    public static final int java_version_1_9 = 10;
+    public static final int java_version_9 = 10;
     public static final int wrong_staticness_fail = 1;
     public static final int wrong_staticness_ignore = 2;
     public static final int wrong_staticness_fix = 3;
@@ -218,6 +220,10 @@ public class Options extends OptionsBase {
                     || option.equals("ignore-resolving-levels")
             )
                 ignore_resolving_levels = true;
+            else if (false
+                    || option.equals("weak-map-structures")
+            )
+                weak_map_structures = true;
             else if (false
                     || option.equals("cp")
                     || option.equals("soot-class-path")
@@ -405,6 +411,10 @@ public class Options extends OptionsBase {
                     || option.equals("allow-phantom-refs")
             )
                 allow_phantom_refs = true;
+            else if (false
+                    || option.equals("allow-phantom-elms")
+            )
+                allow_phantom_elms = true;
             else if (false
                     || option.equals("no-bodies-for-excluded")
             )
@@ -741,6 +751,16 @@ public class Options extends OptionsBase {
                     }
                     java_version = java_version_8;
                 }
+                else if (false
+                        || value.equals("1.9")
+                        || value.equals("9")
+                ) {
+                    if (java_version != 0 && java_version != java_version_9) {
+                        G.v().out.println("Multiple values given for option " + option);
+                        return false;
+                    }
+                    java_version = java_version_9;
+                }
                 else {
                     G.v().out.println(String.format("Invalid value %s given for option -%s", option, value));
                     return false;
@@ -751,6 +771,10 @@ public class Options extends OptionsBase {
                     || option.equals("output-jar")
             )
                 output_jar = true;
+            else if (false
+                    || option.equals("hierarchy-dirs")
+            )
+                hierarchy_dirs = true;
             else if (false
                     || option.equals("xml-attributes")
             )
@@ -1343,6 +1367,10 @@ public class Options extends OptionsBase {
     private boolean ignore_resolving_levels = false;
     public void set_ignore_resolving_levels(boolean setting) { ignore_resolving_levels = setting; }
 
+    public boolean weak_map_structures() { return weak_map_structures; }
+    private boolean weak_map_structures = false;
+    public void set_weak_map_structures(boolean setting) { weak_map_structures = setting; }
+
     public String soot_classpath() { return soot_classpath; }
     public void set_soot_classpath(String setting) { soot_classpath = setting; }
     private String soot_classpath = "";
@@ -1404,6 +1432,10 @@ public class Options extends OptionsBase {
     private boolean allow_phantom_refs = false;
     public void set_allow_phantom_refs(boolean setting) { allow_phantom_refs = setting; }
 
+    public boolean allow_phantom_elms() { return allow_phantom_elms; }
+    private boolean allow_phantom_elms = false;
+    public void set_allow_phantom_elms(boolean setting) { allow_phantom_elms = setting; }
+
     public boolean no_bodies_for_excluded() { return no_bodies_for_excluded; }
     private boolean no_bodies_for_excluded = false;
     public void set_no_bodies_for_excluded(boolean setting) { no_bodies_for_excluded = setting; }
@@ -1448,6 +1480,10 @@ public class Options extends OptionsBase {
     public boolean output_jar() { return output_jar; }
     private boolean output_jar = false;
     public void set_output_jar(boolean setting) { output_jar = setting; }
+
+    public boolean hierarchy_dirs() { return hierarchy_dirs; }
+    private boolean hierarchy_dirs = false;
+    public void set_hierarchy_dirs(boolean setting) { hierarchy_dirs = setting; }
 
     public boolean xml_attributes() { return xml_attributes; }
     private boolean xml_attributes = false;
@@ -1617,6 +1653,7 @@ public class Options extends OptionsBase {
                 + padOpt("-debug", "Print various Soot debugging info")
                 + padOpt("-debug-resolver", "Print debugging info from SootResolver")
                 + padOpt("-ignore-resolving-levels", "Ignore mismatching resolving levels")
+                + padOpt("-weak-map-structures", "Use weak references in Scene to prevent memory leakage when removing many classes/methods/locals")
                 + "\nInput Options:\n"
                 + padOpt("-cp ARG -soot-class-path ARG -soot-classpath ARG", "Use ARG as the classpath for finding classes.")
                 + padOpt("-pp, -prepend-classpath", "Prepend the given soot classpath to the default classpath.")
@@ -1637,6 +1674,7 @@ public class Options extends OptionsBase {
                     + padVal("apk-class-jimple apk-c-j", "Favour APK files as Soot source, disregard Java files")
                 + padOpt("-full-resolver", "Force transitive resolving of referenced classes")
                 + padOpt("-allow-phantom-refs", "Allow unresolved classes; may cause errors")
+                + padOpt("-allow-phantom-elms", "Allow phantom methods and fields in non-phantom classes")
                 + padOpt("-no-bodies-for-excluded", "Do not load bodies for excluded classes")
                 + padOpt("-j2me", "Use J2ME mode; changes assignment of types")
                 + padOpt("-main-class ARG", "Sets the main class for whole-program analysis.")
@@ -1673,7 +1711,9 @@ public class Options extends OptionsBase {
                     + padVal("1.6 6", "Force Java 1.6 as output version.")
                     + padVal("1.7 7", "Force Java 1.7 as output version.")
                     + padVal("1.8 8", "Force Java 1.8 as output version.")
+                    + padVal("1.9 9", "Force Java 1.9 as output version (Experimental).")
                 + padOpt("-outjar, -output-jar", "Make output dir a Jar file instead of dir")
+                + padOpt("-hierarchy-dirs", "Generate class hierarchy directories for Jimple/Shimple")
                 + padOpt("-xml-attributes", "Save tags to XML attributes for Eclipse")
                 + padOpt("-print-tags, -print-tags-in-output", "Print tags in output files after stmt")
                 + padOpt("-no-output-source-file-attribute", "Don't output Source File Attribute when producing class files")
@@ -1854,12 +1894,13 @@ public class Options extends OptionsBase {
     public String getPhaseHelp(String phaseName) {
         if (phaseName.equals("jb"))
             return "Phase " + phaseName + ":\n"
-                    + "\nJimple Body Creation creates a JimpleBody for each input method, \nusing either coffi, to read .class files, or the jimple parser, \nto read .jimple files."
+                    + "\nJimple Body Creation creates a JimpleBody for each input method, \nusing either asm, to read .class files, or the jimple parser, to \nread .jimple files."
                     + "\n\nRecognized options (with default values):\n"
                     + padOpt("enabled (true)", "")
                     + padOpt("use-original-names (false)", "")
                     + padOpt("preserve-source-annotations (false)", "")
-                    + padOpt("stabilize-local-names (false)", "");
+                    + padOpt("stabilize-local-names (false)", "")
+                    + padOpt("model-lambdametafactory (true)", "Replace dynamic invoke instructions to the LambdaMetafactory by static invokes to a synthetic LambdaMetafactory implementation.");
 
         if (phaseName.equals("jb.dtr"))
             return "Phase " + phaseName + ":\n"
@@ -2808,7 +2849,8 @@ public class Options extends OptionsBase {
                     "enabled",
                     "use-original-names",
                     "preserve-source-annotations",
-                    "stabilize-local-names"
+                    "stabilize-local-names",
+                    "model-lambdametafactory"
             );
 
         if (phaseName.equals("jb.dtr"))
@@ -3552,7 +3594,8 @@ public class Options extends OptionsBase {
                     + "enabled:true "
                     + "use-original-names:false "
                     + "preserve-source-annotations:false "
-                    + "stabilize-local-names:false ";
+                    + "stabilize-local-names:false "
+                    + "model-lambdametafactory:true ";
 
         if (phaseName.equals("jb.dtr"))
             return ""

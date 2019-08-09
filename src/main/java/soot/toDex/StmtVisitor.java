@@ -112,16 +112,16 @@ import soot.util.Switchable;
  * @see Insn intermediate representation of an instruction
  * @see Instruction final representation of an instruction
  */
-class StmtVisitor implements StmtSwitch {
+public class StmtVisitor implements StmtSwitch {
 
   private final SootMethod belongingMethod;
   private final DexArrayInitDetector arrayInitDetector;
 
-  private ConstantVisitor constantV;
+  protected ConstantVisitor constantV;
 
-  private RegisterAllocator regAlloc;
+  protected RegisterAllocator regAlloc;
 
-  private ExprVisitor exprV;
+  protected ExprVisitor exprV;
 
   private String lastReturnTypeDescriptor;
 
@@ -206,7 +206,7 @@ class StmtVisitor implements StmtSwitch {
     return insns.size();
   }
 
-  protected void addInsn(Insn insn, Stmt s) {
+  public void addInsn(Insn insn, Stmt s) {
     insns.add(insn);
     if (s != null) {
       if (insnStmtMap.put(insn, s) != null) {
@@ -274,7 +274,6 @@ class StmtVisitor implements StmtSwitch {
       Register secondSource = nextInsn.getRegs().get(1);
       if (firstTarget.equals(secondSource) && secondTarget.equals(firstSource)) {
         Stmt nextStmt = insnStmtMap.get(nextInsn);
-
         // Remove the second instruction as it does not change any
         // state. We cannot remove the first instruction as other
         // instructions may depend on the register being set.
@@ -282,6 +281,10 @@ class StmtVisitor implements StmtSwitch {
           insns.remove(nextIndex);
 
           if (nextStmt != null) {
+            if (nextIndex == this.insns.size() - 1) {
+              // we are now at the end of the list
+              continue;
+            }
             Insn nextInst = this.insns.get(nextIndex + 1);
             insnStmtMap.remove(nextInsn);
             insnStmtMap.put(nextInst, nextStmt);
@@ -530,7 +533,7 @@ class StmtVisitor implements StmtSwitch {
     }
   }
 
-  protected static Insn buildMoveInsn(Register destinationReg, Register sourceReg) {
+  public static Insn buildMoveInsn(Register destinationReg, Register sourceReg) {
     // get the optional opcode suffix, depending on the sizes of the regs
     if (!destinationReg.fitsShort()) {
       Opcode opc;

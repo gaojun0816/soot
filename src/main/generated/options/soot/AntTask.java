@@ -34,7 +34,7 @@ import java.util.*;
  * Soot ant task.
  * @author Ondrej Lhotak
  */
-@javax.annotation.Generated(value = "Saxonica v3.0", date = "2018-07-02T12:04:47.39+02:00", comments = "from soot_options.xml")
+@javax.annotation.Generated(value = "Saxonica v3.0", comments = "from soot_options.xml")
 public class AntTask extends MatchingTask {
     public static final boolean DEBUG = true;
     private void debug(String s) {
@@ -186,6 +186,10 @@ public class AntTask extends MatchingTask {
             if(arg) addArg("-ignore-resolving-levels");
         }
   
+        public void setweak_map_structures(boolean arg) {
+            if(arg) addArg("-weak-map-structures");
+        }
+  
         public void setsoot_classpath(String arg) {
             addArg("-soot-classpath");
             addArg(arg);
@@ -263,6 +267,10 @@ public class AntTask extends MatchingTask {
   
         public void setallow_phantom_refs(boolean arg) {
             if(arg) addArg("-allow-phantom-refs");
+        }
+  
+        public void setallow_phantom_elms(boolean arg) {
+            if(arg) addArg("-allow-phantom-elms");
         }
   
         public void setno_bodies_for_excluded(boolean arg) {
@@ -356,6 +364,8 @@ public class AntTask extends MatchingTask {
                 || arg.equals( "7" )
                 || arg.equals( "1.8" )
                 || arg.equals( "8" )
+                || arg.equals( "1.9" )
+                || arg.equals( "9" )
                 ) {
                 addArg("-java-version");
                 addArg(arg);
@@ -366,6 +376,10 @@ public class AntTask extends MatchingTask {
   
         public void setoutput_jar(boolean arg) {
             if(arg) addArg("-output-jar");
+        }
+  
+        public void sethierarchy_dirs(boolean arg) {
+            if(arg) addArg("-hierarchy-dirs");
         }
   
         public void setxml_attributes(boolean arg) {
@@ -655,6 +669,12 @@ public class AntTask extends MatchingTask {
             addArg("-p");
             addArg("jb");
             addArg("stabilize-local-names:"+(arg?"true":"false"));
+          }
+      
+          public void setmodel_lambdametafactory(boolean arg) {
+            addArg("-p");
+            addArg("jb");
+            addArg("model-lambdametafactory:"+(arg?"true":"false"));
           }
       
         }
