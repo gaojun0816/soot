@@ -664,44 +664,6 @@ public class Scene // extends AbstractHost
     boolean r = false;
     // first check magic number
     File apk = new File(file);
-    MagicNumberFileFilter apkFilter = new MagicNumberFileFilter(new byte[] {(byte) 0x50, (byte) 0x4B,
-                                                                            (byte) 0x03, (byte) 0x04});
-    if (!apkFilter.accept(apk)) {
-      return r;
-    }
-    // second check if contains dex file.
-    ZipFile zf = null;
-    try {
-      zf = new ZipFile(file);
-      Enumeration<?> en = zf.entries();
-      while (en.hasMoreElements()) {
-        ZipEntry z = (ZipEntry) en.nextElement();
-        String name = z.getName();
-        if (name.equals("classes.dex")) {
-          r = true;
-          break;
-        }
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    } finally {
-      if (zf != null) {
-        try {
-          zf.close();
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
-    }
-    
-    return r;
-  }
-
-  public static boolean isApk(String file) {
-    // decide if a file is an APK by its magic number and whether it contains dex file.
-    boolean r = false;
-    // first check magic number
-    File apk = new File(file);
     MagicNumberFileFilter apkFilter
         = new MagicNumberFileFilter(new byte[] { (byte) 0x50, (byte) 0x4B, (byte) 0x03, (byte) 0x04 });
     if (!apkFilter.accept(apk)) {
