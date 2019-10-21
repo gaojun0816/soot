@@ -660,7 +660,7 @@ public class Scene // extends AbstractHost
 
     return jarPath;
   }
-
+  
   public static boolean isApk(String file) {
     // decide if a file is an APK by its magic number and whether it contains dex file.
     boolean r = false;
